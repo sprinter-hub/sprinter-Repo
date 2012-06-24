@@ -1,2 +1,1 @@
 this is another document using git on windows
-this is another document using git on windows
