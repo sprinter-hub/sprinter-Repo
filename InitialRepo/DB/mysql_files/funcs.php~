@@ -1,0 +1,139 @@
+<?php
+
+require 'constants.php';
+
+define("DEBUG", true);
+
+/* To connect to the database 
+   Returns : connection id*/
+function db_connect($dbuser = 'sampadm', $dbpass = 'secret') {
+
+	if (DEBUG) {
+		print __FUNCTION__ . ' : entered' . '<br />';
+		print 'DB_HOST : ' . DB_HOST . ', user : ' . $dbuser . '<br />';
+	}
+	
+	$conn = mysql_connect(DB_HOST, $dbuser, $dbpass);
+    if (!$conn) {
+        die('Could not connect: ' . mysql_error() . '<br />');
+	}
+	echo 'Connected to database' . '<br />';
+	if (DEBUG) {
+		print 'connection id : ' . $conn . '<br />';
+	}
+	
+	return $conn;
+}
+
+/* To connect to the database 
+   Returns : connection id*/
+function db_disconnect($conn) {
+
+	if (DEBUG) {
+		print __FUNCTION__ . ' : entered' . '<br />';
+		print 'connection : ' . $conn . '<br />';
+		//print 'recent connection id : ' . CONNECTION_ID() . '<br />';
+	}
+	
+	mysql_close($conn);
+	echo 'Disconnected from database' . '<br />';
+	
+	if (DEBUG) {
+	    //print 'database : ' . DATABASE() . '<br />';
+	    //print 'recent connection id : ' . CONNECTION_ID() . '<br />';
+	}
+
+}
+
+/* Adds a new user */
+function add_user($conn, $user_entry_json) {
+
+	if (DEBUG) {
+		print __FUNCTION__ . ' : entered' . '<br />';
+		print 'json object received : ' . $user_entry_json . '<br />';
+	}
+	
+	$jsonobj = json_decode($user_entry_json);
+	$email_id = $jsonobj->{COLUMN_USERNAME};
+	$password = $jsonobj->{COLUMN_PASSWORD};
+	$display_name = $jsonobj->{COLUMN_DISPLAY_NAME};
+	$first_name = $jsonobj->{COLUMN_FIRST_NAME};
+	$last_name = $jsonobj->{COLUMN_LAST_NAME};
+	$avatar = $jsonobj->{COLUMN_AVATAR};
+	$dob = $jsonobj->{COLUMN_DOB};
+	$gender = $jsonobj->{COLUMN_GENDER};
+	
+	if (DEBUG) {
+		print 'Details of the new user are :' . '<br />';
+		print COLUMN_USERNAME . ' : ' . $email_id . '<br />';
+		print COLUMN_PASSWORD . ' : ' . $password . '<br />';
+		print COLUMN_DISPLAY_NAME . ' : ' . $display_name . '<br />';
+		print COLUMN_FIRST_NAME . ' : ' . $first_name . '<br />';
+		print COLUMN_LAST_NAME . ' : ' . $last_name . '<br />';
+		print COLUMN_AVATAR . ' : ' . $avatar . '<br />';
+		print COLUMN_DOB . ' : ' . $dob . '<br />';
+		print COLUMN_GENDER . ' : ' . $gender . '<br />';
+	}
+	
+    mysql_select_db(JUMBLE_GAME_DB);
+
+    // Creating new user entry into table 'users'
+    $sql = "INSERT INTO " . TABLE_USERS .
+           "(" . COLUMN_USERNAME . "," . COLUMN_DISPLAY_NAME . "," . COLUMN_FIRST_NAME . "," . 
+           COLUMN_LAST_NAME . "," . COLUMN_AVATAR . "," . COLUMN_DOB . "," . COLUMN_GENDER . ")".
+           "VALUES('$email_id','$display_name','$first_name','$last_name', '$avatar' , '$dob','$gender')";
+       
+    $retval = mysql_query( $sql, $conn );
+    if(! $retval )
+    {
+        die('Could not enter data : ' . mysql_error() . '<br />');
+    }
+    print "User " . $email_id . " created successfully\n" . '<br />';
+    
+    $sql = 'SELECT ' . COLUMN_USER_ID . ' FROM ' . TABLE_USERS . 
+            ' WHERE ' . COLUMN_USERNAME . ' = ' . "'" . $email_id . "'";
+            
+    if (DEBUG) {
+        print "sql : " . $sql . '<br />';
+    }
+
+    $retval = mysql_query( $sql, $conn );
+    $row = mysql_fetch_array($retval);
+    if (DEBUG) {
+        print "row : " . $row . '<br />';
+        print "retval : " . $retval . '<br />';
+    }
+       
+    // Storing password into table 'passwords'
+    $sql = "INSERT INTO " . TABLE_PASSWORDS .
+       " (" . COLUMN_USER_ID . " , " . COLUMN_PASSWORD . ") ".
+       "VALUES( " . $row[COLUMN_USER_ID] . " , '$password' )";
+       
+    if (DEBUG) {
+        print "sql : " . $sql . '<br />';
+    }
+
+    $retval = mysql_query( $sql, $conn );
+    if(! $retval )
+    {
+        die('Could not enter data : ' . mysql_error() . '<br />');
+    }
+
+    if (DEBUG) {
+        print "Password stored successfully\n" . '<br />';   
+    }
+    
+    return $retval;
+
+}
+
+/* To connect to the database 
+   Returns : connection id*/
+function get_user_info($conn, $username) {
+
+	if (DEBUG) {
+		print __FUNCTION__ . ' : entered' . '<br />';
+	}
+}
+
+?>

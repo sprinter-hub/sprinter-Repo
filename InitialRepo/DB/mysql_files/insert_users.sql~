@@ -1,0 +1,8 @@
+INSERT INTO users (email_id, pwd, first_name, last_name, dob, gender) 
+	VALUES ('user_one@example.com', 'user_one', 'one_first', 'one_last', '1992-01-01', 'M')
+
+INSERT INTO users (email_id, pwd, first_name, last_name, dob, gender) 
+	VALUES ('user_two@example.com', 'user_two', 'two_first', 'two_last', '1992-01-02', 'F')
+
+
+

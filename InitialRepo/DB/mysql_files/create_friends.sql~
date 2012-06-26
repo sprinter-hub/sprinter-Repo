@@ -1,0 +1,9 @@
+CREATE TABLE friends
+(
+	user_id INT UNSIGNED NOT NULL,
+	friend_id  INT UNSIGNED NOT NULL,
+	FOREIGN KEY (user_id) REFERENCES users (user_id),
+	FOREIGN KEY (friend_id) REFERENCES users (user_id),
+	PRIMARY KEY (user_id)
+) ENGINE = InnoDB;
+

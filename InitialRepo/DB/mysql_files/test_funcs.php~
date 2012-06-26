@@ -1,0 +1,9 @@
+<?php
+
+require "funcs.php";
+
+$connid = db_connect();
+echo 'connection id : ' . $connid . '<br />';
+db_disconnect();
+
+?>
